@@ -1341,11 +1341,10 @@ final _i18nModel = <LocaleType, Map<String, Object>>{
     'am': 'AM',
     'pm': 'PM'
   }
-
 };
 
 /// Get international object for [localeType]
-Map<String, Object> i18nObjInLocale(LocaleType? localeType) =>
+Map<String, Object> i18nObjInLocale(LocaleType localeType) =>
     _i18nModel[localeType] ?? _i18nModel[LocaleType.en] as Map<String, Object>;
 
 /// Get international lookup for a [localeType], [key] and [index].

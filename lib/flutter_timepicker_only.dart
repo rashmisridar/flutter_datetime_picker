@@ -89,7 +89,7 @@ class DatePicker {
   ///
   /// Display time picker bottom sheet with AM/PM.
   ///
-  static Future<DateTime> showTime12hPicker(
+  static Future<DateTime> showTime12hPickerOnly(
     BuildContext context, {
     bool showTitleActions: true,
     DateChangedCallback onChanged,
@@ -296,21 +296,27 @@ class _DatePickerState extends State<_DatePickerComponent> {
         animation: widget.route.animation,
         builder: (BuildContext context, Widget child) {
           final double bottomPadding = MediaQuery.of(context).padding.bottom;
-          return ClipRect(
-            child: CustomSingleChildLayout(
-              delegate: _BottomPickerLayout(
-                widget.route.animation.value,
-                theme,
-                showTitleActions: widget.route.showTitleActions,
-                bottomPadding: bottomPadding,
-              ),
-              child: GestureDetector(
-                child: Material(
-                  color: theme.backgroundColor,
-                  child: _renderPickerView(theme),
+          return Align(
+            alignment: Alignment.bottomCenter,
+            child: ClipRect(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                  height: 100,
+                  child: Container(
+                      //color: Colors.red,
+                      ),
                 ),
-              ),
-            ),
+                GestureDetector(
+                  child: Material(
+                    //   color: theme.backgroundColor,
+                    //color: Colors.blueAccent,
+                    child: _renderPickerView(theme),
+                  ),
+                )
+              ],
+            )),
           );
         },
       ),
@@ -328,8 +334,8 @@ class _DatePickerState extends State<_DatePickerComponent> {
     if (widget.route.showTitleActions == true) {
       return Column(
         children: <Widget>[
-          _renderTitleActionsView(theme),
           itemView,
+          _renderTitleActionsView(theme),
         ],
       );
     }
@@ -345,12 +351,13 @@ class _DatePickerState extends State<_DatePickerComponent> {
     ValueChanged<int> selectedChangedWhenScrolling,
     ValueChanged<int> selectedChangedWhenScrollEnd,
   ) {
-    return Expanded(
+    return Flexible(
       flex: layoutProportion,
       child: Container(
         padding: EdgeInsets.all(8.0),
         height: theme.containerHeight,
-        decoration: BoxDecoration(color: theme.backgroundColor),
+        decoration: BoxDecoration(),
+        //color: Colors.yellow), //theme.backgroundColor
         child: NotificationListener(
           onNotification: (ScrollNotification notification) {
             if (notification.depth == 0 &&
@@ -365,10 +372,11 @@ class _DatePickerState extends State<_DatePickerComponent> {
           },
           child: CupertinoPicker.builder(
             key: key,
-            backgroundColor: theme.backgroundColor,
+            //backgroundColor: Colors.red, //theme.backgroundColor,
             scrollController: scrollController as FixedExtentScrollController,
             itemExtent: theme.itemHeight,
             onSelectedItemChanged: (int index) {
+              print('onSelectedItemChanged $index');
               selectedChangedWhenScrolling(index);
             },
             useMagnifier: true,
@@ -378,6 +386,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
                 return null;
               }
               return Container(
+                // color: Colors.brown,
                 height: theme.itemHeight,
                 alignment: Alignment.center,
                 child: Text(
@@ -395,7 +404,7 @@ class _DatePickerState extends State<_DatePickerComponent> {
 
   Widget _renderItemView(DatePickerTheme theme) {
     return Container(
-      color: theme.backgroundColor,
+      // color: Colors.red, //theme.backgroundColor,
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
@@ -416,9 +425,12 @@ class _DatePickerState extends State<_DatePickerComponent> {
                   })
                 : null,
           ),
-          Text(
-            widget.pickerModel.leftDivider(),
-            style: theme.itemStyle,
+          Container(
+            //  color: Colors.green,
+            child: Text(
+              widget.pickerModel.leftDivider(),
+              style: theme.itemStyle,
+            ),
           ),
           Container(
             child: widget.pickerModel.layoutProportions()[1] > 0
@@ -546,7 +558,6 @@ class _BottomPickerLayout extends SingleChildLayoutDelegate {
     if (showTitleActions == true) {
       maxHeight += theme.titleHeight;
     }
-
     return BoxConstraints(
       minWidth: constraints.maxWidth,
       maxWidth: constraints.maxWidth,
