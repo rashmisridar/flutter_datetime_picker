@@ -102,7 +102,7 @@ class HomePage extends StatelessWidget {
       body: Center(
         child: Column(
           children: <Widget>[
-            TextButton(
+            /*  TextButton(
                 onPressed: () {
                   DatePicker.showDatePicker(context,
                       showTitleActions: true,
@@ -127,22 +127,19 @@ class HomePage extends StatelessWidget {
                 child: Text(
                   'show date picker(custom theme &date time range)',
                   style: TextStyle(color: Colors.blue),
-                )),
+                )),*/
             SizedBox(height: 10),
-            TextButton(
-                onPressed: () {
-                  DatePicker.showTime12hPickerOnly(context,
-                      showTitleActions: true, onChanged: (date) {
-                    print('change $date in time zone ' +
-                        date.timeZoneOffset.inHours.toString());
-                  }, onConfirm: (date) {
-                    print('confirm $date');
-                  }, currentTime: DateTime.now());
-                },
-                child: Text(
-                  'show 12H time picker with AM/PM',
-                  style: TextStyle(color: Colors.blue),
-                )),
+            SizedBox(
+              height: 210,
+              child: DatePicker.showTime12hPickerOnly(context,
+                  showTitleActions: true, onChanged: (date) {
+                print('change $date in time zone ' +
+                    date.timeZoneOffset.inHours.toString());
+              }, onConfirm: (date) {
+                print('confirm $date');
+              }, currentTime: DateTime.now()),
+            ),
+            SizedBox(height: 10),
           ],
         ),
       ),

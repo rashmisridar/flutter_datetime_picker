@@ -19,11 +19,77 @@ class DatePicker {
   ///
   /// Display date picker bottom sheet.
   ///
+/*  static Future<DateTime> showDatePicker(
+    BuildContext context, {
+    bool showTitleActions: true,
+    DateTime minTime,
+    DateTime maxTime,
+    DateChangedCallback onChanged,
+    DateChangedCallback onConfirm,
+    DateCancelledCallback onCancel,
+    locale: LocaleType.en,
+    DateTime currentTime,
+    DatePickerTheme theme,
+  }) async {
+    return await Navigator.push(
+      context,
+      _DatePickerRoute(
+        showTitleActions: showTitleActions,
+        onChanged: onChanged,
+        onConfirm: onConfirm,
+        onCancel: onCancel,
+        locale: locale,
+        theme: theme,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        pickerModel: DatePickerModel(
+          currentTime: currentTime,
+          maxTime: maxTime,
+          minTime: minTime,
+          locale: locale,
+        ),
+      ),
+    );
+  }*/
+
+  ///
+  /// Display time picker bottom sheet.
+  ///
+  static Future<DateTime> showTimePicker(
+    BuildContext context, {
+    bool showTitleActions: true,
+    bool showSecondsColumn: true,
+    DateChangedCallback onChanged,
+    DateChangedCallback onConfirm,
+    DateCancelledCallback onCancel,
+    locale: LocaleType.en,
+    DateTime currentTime,
+    DatePickerTheme theme,
+  }) async {
+    return await Navigator.push(
+      context,
+      _DatePickerRoute(
+        showTitleActions: showTitleActions,
+        onChanged: onChanged,
+        onConfirm: onConfirm,
+        onCancel: onCancel,
+        locale: locale,
+        theme: theme,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        pickerModel: TimePickerModel(
+          currentTime: currentTime,
+          locale: locale,
+          showSecondsColumn: showSecondsColumn,
+        ),
+      ),
+    );
+  }
 
   ///
   /// Display time picker bottom sheet with AM/PM.
   ///
-  static showTime12hPickerOnly(
+  static Future<DateTime> showTime12hPickerOnly(
     BuildContext context, {
     bool showTitleActions: true,
     DateChangedCallback onChanged,
@@ -31,32 +97,96 @@ class DatePicker {
     DateCancelledCallback onCancel,
     locale: LocaleType.en,
     DateTime currentTime,
-    DateTime maxDatePicker,
-    DateTime minDatePicker,
     DatePickerTheme theme,
-  }) {
-    return DatePickerRoute(
-      context: context,
-      showTitleActions: showTitleActions,
-      onChanged: onChanged,
-      onConfirm: onConfirm,
-      onCancel: onCancel,
-      locale: locale,
-      theme: theme,
-      maxDatePicker: maxDatePicker,
-      minDatePicker: minDatePicker,
-      barrierLabel: MaterialLocalizations.of(context).modalBarrierDismissLabel,
-      pickerModel: Time12hPickerModel(
-        currentTime: currentTime,
+  }) async {
+    return await Navigator.push(
+      context,
+      _DatePickerRoute(
+        showTitleActions: showTitleActions,
+        onChanged: onChanged,
+        onConfirm: onConfirm,
+        onCancel: onCancel,
         locale: locale,
+        theme: theme,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        pickerModel: Time12hPickerModel(
+          //Time12hPickerModel
+          currentTime: currentTime,
+          locale: locale,
+        ),
+      ),
+    );
+  }
+
+  ///
+  /// Display date&time picker bottom sheet.
+  ///
+  static Future<DateTime> showDateTimePicker(
+    BuildContext context, {
+    bool showTitleActions: true,
+    DateTime minTime,
+    DateTime maxTime,
+    DateChangedCallback onChanged,
+    DateChangedCallback onConfirm,
+    DateCancelledCallback onCancel,
+    locale: LocaleType.en,
+    DateTime currentTime,
+    DatePickerTheme theme,
+  }) async {
+    return await Navigator.push(
+      context,
+      _DatePickerRoute(
+        showTitleActions: showTitleActions,
+        onChanged: onChanged,
+        onConfirm: onConfirm,
+        onCancel: onCancel,
+        locale: locale,
+        theme: theme,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        pickerModel: DateTimePickerModel(
+          currentTime: currentTime,
+          minTime: minTime,
+          maxTime: maxTime,
+          locale: locale,
+        ),
+      ),
+    );
+  }
+
+  ///
+  /// Display date picker bottom sheet witch custom picker model.
+  ///
+  static Future<DateTime> showPicker(
+    BuildContext context, {
+    bool showTitleActions: true,
+    DateChangedCallback onChanged,
+    DateChangedCallback onConfirm,
+    DateCancelledCallback onCancel,
+    locale: LocaleType.en,
+    BasePickerModel pickerModel,
+    DatePickerTheme theme,
+  }) async {
+    return await Navigator.push(
+      context,
+      _DatePickerRoute(
+        showTitleActions: showTitleActions,
+        onChanged: onChanged,
+        onConfirm: onConfirm,
+        onCancel: onCancel,
+        locale: locale,
+        theme: theme,
+        barrierLabel:
+            MaterialLocalizations.of(context).modalBarrierDismissLabel,
+        pickerModel: pickerModel,
       ),
     );
   }
 }
 
-class DatePickerRoute extends StatelessWidget {
-  DatePickerRoute({
-    this.context,
+class _DatePickerRoute<T> extends PopupRoute<T> {
+  _DatePickerRoute({
     this.showTitleActions,
     this.onChanged,
     this.onConfirm,
@@ -64,12 +194,11 @@ class DatePickerRoute extends StatelessWidget {
     DatePickerTheme theme,
     this.barrierLabel,
     this.locale,
-    this.minDatePicker,
-    this.maxDatePicker,
     RouteSettings settings,
     BasePickerModel pickerModel,
   })  : this.pickerModel = pickerModel ?? DatePickerModel(),
-        this.theme = theme ?? DatePickerTheme();
+        this.theme = theme ?? DatePickerTheme(),
+        super(settings: settings);
 
   final bool showTitleActions;
   final DateChangedCallback onChanged;
@@ -77,10 +206,8 @@ class DatePickerRoute extends StatelessWidget {
   final DateCancelledCallback onCancel;
   final LocaleType locale;
   final DatePickerTheme theme;
-  final DateTime minDatePicker;
-  final DateTime maxDatePicker;
   final BasePickerModel pickerModel;
-  final BuildContext context;
+
   @override
   Duration get transitionDuration => const Duration(milliseconds: 200);
 
@@ -93,15 +220,15 @@ class DatePickerRoute extends StatelessWidget {
   @override
   Color get barrierColor => Colors.black54;
 
-  //AnimationController _animationController;
+  AnimationController _animationController;
 
-  /* @override
+  @override
   AnimationController createAnimationController() {
     assert(_animationController == null);
     _animationController =
         BottomSheet.createAnimationController(navigator.overlay);
     return _animationController;
-  }*/
+  }
 
   @override
   Widget buildPage(BuildContext context, Animation<double> animation,
@@ -109,23 +236,7 @@ class DatePickerRoute extends StatelessWidget {
     Widget bottomSheet = MediaQuery.removePadding(
       context: context,
       removeTop: true,
-      child: DatePickerComponent(
-          onChanged: onChanged,
-          locale: this.locale,
-          route: this,
-          pickerModel: pickerModel,
-          maxDatePicker: maxDatePicker,
-          minDatePicker: minDatePicker),
-    );
-    return InheritedTheme.captureAll(context, bottomSheet);
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    Widget bottomSheet = MediaQuery.removePadding(
-      context: context,
-      removeTop: true,
-      child: DatePickerComponent(
+      child: _DatePickerComponent(
         onChanged: onChanged,
         locale: this.locale,
         route: this,
@@ -136,22 +247,18 @@ class DatePickerRoute extends StatelessWidget {
   }
 }
 
-class DatePickerComponent extends StatefulWidget {
-  DatePickerComponent({
+class _DatePickerComponent extends StatefulWidget {
+  _DatePickerComponent({
     Key key,
     this.route,
     this.pickerModel,
     this.onChanged,
     this.locale,
-    this.minDatePicker,
-    this.maxDatePicker,
   }) : super(key: key);
 
   final DateChangedCallback onChanged;
 
-  final DateTime maxDatePicker;
-  final DateTime minDatePicker;
-  final DatePickerRoute route;
+  final _DatePickerRoute route;
 
   final LocaleType locale;
 
@@ -163,7 +270,7 @@ class DatePickerComponent extends StatefulWidget {
   }
 }
 
-class _DatePickerState extends State<DatePickerComponent> {
+class _DatePickerState extends State<_DatePickerComponent> {
   FixedExtentScrollController leftScrollCtrl, middleScrollCtrl, rightScrollCtrl;
 
   @override
@@ -173,7 +280,7 @@ class _DatePickerState extends State<DatePickerComponent> {
   }
 
   void refreshScrollOffset() {
-    print('refreshScrollOffset ${widget.pickerModel.currentLeftIndex()}');
+//    print('refreshScrollOffset ${widget.pickerModel.currentRightIndex()}');
     leftScrollCtrl = FixedExtentScrollController(
         initialItem: widget.pickerModel.currentLeftIndex());
     middleScrollCtrl = FixedExtentScrollController(
@@ -185,23 +292,41 @@ class _DatePickerState extends State<DatePickerComponent> {
   @override
   Widget build(BuildContext context) {
     DatePickerTheme theme = widget.route.theme;
-    return Material(
-      // color: CoonstColor.green,
-      child: Container(
-        color: Colors.white,
-        child: Material(
-          //color: CoonstColor.red,
-          //   color: theme.backgroundColor,
-          //color: Colors.blueAccent,
-          child: _renderPickerView(theme),
-        ),
+    print('widget.route.animation ${widget.route.animation.value}');
+    return GestureDetector(
+      child: AnimatedBuilder(
+        animation: widget.route.animation,
+        builder: (BuildContext context, Widget child) {
+          final double bottomPadding = MediaQuery.of(context).padding.bottom;
+          return Align(
+            alignment: Alignment.bottomCenter,
+            child: ClipRect(
+                child: Column(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                SizedBox(
+                  height: 100,
+                  child: Container(
+                      //color: Colors.red,
+                      ),
+                ),
+                GestureDetector(
+                  child: Material(
+                    //   color: theme.backgroundColor,
+                    //color: Colors.blueAccent,
+                    child: _renderPickerView(theme),
+                  ),
+                )
+              ],
+            )),
+          );
+        },
       ),
     );
   }
 
   void _notifyDateChanged() {
     if (widget.onChanged != null) {
-      print('notofydata change ${widget.pickerModel.finalTime()}');
       widget.onChanged(widget.pickerModel.finalTime());
     }
   }
@@ -210,10 +335,9 @@ class _DatePickerState extends State<DatePickerComponent> {
     Widget itemView = _renderItemView(theme);
     if (widget.route.showTitleActions == true) {
       return Column(
-        mainAxisSize: MainAxisSize.max,
         children: <Widget>[
-          Expanded(flex: 4, child: itemView),
-          Expanded(flex: 1, child: _renderTitleActionsView(theme)),
+          itemView,
+          _renderTitleActionsView(theme),
         ],
       );
     }
@@ -232,12 +356,10 @@ class _DatePickerState extends State<DatePickerComponent> {
     return Flexible(
       flex: layoutProportion,
       child: Container(
-        padding: EdgeInsets.all(0.0),
-        margin: EdgeInsets.fromLTRB(0, 10, 0, 10),
-        // height: theme.containerHeight,
-        decoration: BoxDecoration(
-          color: theme.backgroundColor,
-        ), //// Colors.yellow
+        padding: EdgeInsets.all(8.0),
+        height: theme.containerHeight,
+        decoration: BoxDecoration(),
+        //color: Colors.yellow), //theme.backgroundColor
         child: NotificationListener(
           onNotification: (ScrollNotification notification) {
             if (notification.depth == 0 &&
@@ -250,52 +372,32 @@ class _DatePickerState extends State<DatePickerComponent> {
             }
             return false;
           },
-          child: CupertinoTheme(
-            data: CupertinoThemeData(
-                textTheme: CupertinoTextThemeData(
-                    navTitleTextStyle: TextStyle(
-                  color: Colors.white,
-                  decorationColor: Colors.green,
-                  decoration: TextDecoration.underline,
-                  decorationStyle: TextDecorationStyle.wavy,
-                )),
-                barBackgroundColor: Colors.amber,
-                primaryColor: Colors.green,
-                brightness: Brightness.dark,
-                scaffoldBackgroundColor: Colors.white,
-                primaryContrastingColor: Colors.red),
-            child: CupertinoPicker.builder(
-              key: key,
-              //theme.backgroundColor
-              //  squeeze: 10,
-              squeeze: 1.5,
-              offAxisFraction: 0.0,
-              magnification: 1.1,
-              scrollController: scrollController as FixedExtentScrollController,
-              itemExtent: theme.itemHeight,
-              diameterRatio: 0.8,
-              onSelectedItemChanged: (int index) {
-                print('onSelectedItemChanged $index');
-                selectedChangedWhenScrolling(index);
-              },
-              useMagnifier: false,
-              itemBuilder: (BuildContext context, int index) {
-                final content = stringAtIndexCB(index);
-                if (content == null) {
-                  return null;
-                }
-                return Container(
-                  //  color: Colors.brown,
-                  height: theme.itemHeight,
-                  alignment: Alignment.center,
-                  child: Text(
-                    content,
-                    style: theme.itemStyle,
-                    textAlign: TextAlign.start,
-                  ),
-                );
-              },
-            ),
+          child: CupertinoPicker.builder(
+            key: key,
+            //backgroundColor: Colors.red, //theme.backgroundColor,
+            scrollController: scrollController as FixedExtentScrollController,
+            itemExtent: theme.itemHeight,
+            onSelectedItemChanged: (int index) {
+              print('onSelectedItemChanged $index');
+              selectedChangedWhenScrolling(index);
+            },
+            useMagnifier: true,
+            itemBuilder: (BuildContext context, int index) {
+              final content = stringAtIndexCB(index);
+              if (content == null) {
+                return null;
+              }
+              return Container(
+                // color: Colors.brown,
+                height: theme.itemHeight,
+                alignment: Alignment.center,
+                child: Text(
+                  content,
+                  style: theme.itemStyle,
+                  textAlign: TextAlign.start,
+                ),
+              );
+            },
           ),
         ),
       ),
@@ -304,12 +406,11 @@ class _DatePickerState extends State<DatePickerComponent> {
 
   Widget _renderItemView(DatePickerTheme theme) {
     return Container(
-      color: theme.backgroundColor, //Colors.red,
+      // color: Colors.red, //theme.backgroundColor,
       child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: <Widget>[
           Container(
-            //  width: 25,
             child: widget.pickerModel.layoutProportions()[0] > 0
                 ? _renderColumnView(
                     ValueKey(widget.pickerModel.currentLeftIndex()),
@@ -327,8 +428,6 @@ class _DatePickerState extends State<DatePickerComponent> {
                 : null,
           ),
           Container(
-            margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-            // width: 25,
             //  color: Colors.green,
             child: Text(
               widget.pickerModel.leftDivider(),
@@ -336,7 +435,6 @@ class _DatePickerState extends State<DatePickerComponent> {
             ),
           ),
           Container(
-            //  width: 25,
             child: widget.pickerModel.layoutProportions()[1] > 0
                 ? _renderColumnView(
                     ValueKey(widget.pickerModel.currentLeftIndex()),
@@ -353,16 +451,11 @@ class _DatePickerState extends State<DatePickerComponent> {
                   })
                 : null,
           ),
-          Container(
-            // width: 25,
-            margin: EdgeInsets.fromLTRB(10, 0, 0, 0),
-            child: Text(
-              widget.pickerModel.rightDivider(),
-              style: theme.itemStyle,
-            ),
+          Text(
+            widget.pickerModel.rightDivider(),
+            style: theme.itemStyle,
           ),
           Container(
-            //  width: 25,
             child: widget.pickerModel.layoutProportions()[2] > 0
                 ? _renderColumnView(
                     ValueKey(widget.pickerModel.currentMiddleIndex() * 100 +
@@ -391,15 +484,14 @@ class _DatePickerState extends State<DatePickerComponent> {
     final cancel = _localeCancel();
 
     return Container(
-      //height: theme.titleHeight,
+      height: theme.titleHeight,
       decoration: BoxDecoration(
         color: theme.headerColor ?? theme.backgroundColor,
       ),
       child: Row(
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
-        crossAxisAlignment: CrossAxisAlignment.center,
         children: <Widget>[
-          /*  Container(
+          Container(
             height: theme.titleHeight,
             child: CupertinoButton(
               pressedOpacity: 0.3,
@@ -415,34 +507,8 @@ class _DatePickerState extends State<DatePickerComponent> {
                 }
               },
             ),
-          ),*/
-
-          Expanded(
-            flex: 1,
-            child: Container(
-              height: 50,
-              child: MaterialButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    side: BorderSide(color: Colors.grey)),
-                color: Colors.white,
-                //Theme.of(context).primaryColor,
-                textColor: Colors.white,
-                child: new Text(
-                  '$cancel',
-                ),
-                onPressed: () {
-                  Navigator.pop(context);
-                  if (widget.route.onCancel != null) {
-                    widget.route.onCancel();
-                  }
-                },
-                //splashColor: Constant.blue,
-              ),
-            ),
           ),
-          SizedBox(width: 20),
-          /* Container(
+          Container(
             height: theme.titleHeight,
             child: CupertinoButton(
               pressedOpacity: 0.3,
@@ -457,31 +523,6 @@ class _DatePickerState extends State<DatePickerComponent> {
                   widget.route.onConfirm(widget.pickerModel.finalTime());
                 }
               },
-            ),
-          )*/
-          Expanded(
-            flex: 1,
-            child: Container(
-              height: 50,
-              child: MaterialButton(
-                shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.all(Radius.circular(10)),
-                    side: BorderSide(color: Colors.blue)),
-
-                color: Colors.blue,
-                //Theme.of(context).primaryColor,
-                textColor: Colors.white,
-                child: new Text(
-                  '$done',
-                ),
-                onPressed: () {
-                  Navigator.pop(context, widget.pickerModel.finalTime());
-                  if (widget.route.onConfirm != null) {
-                    widget.route.onConfirm(widget.pickerModel.finalTime());
-                  }
-                },
-                //splashColor: Constant.blue,
-              ),
             ),
           ),
         ],
